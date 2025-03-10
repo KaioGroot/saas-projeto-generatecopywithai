@@ -64,7 +64,7 @@ export default function Desenhar() {
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-300">
-            <canvas id="myCanvas" width={window.innerWidth} height="850"></canvas>
+            <canvas id="myCanvas" width={900} height="850"></canvas>
         </div>
     );
 }
