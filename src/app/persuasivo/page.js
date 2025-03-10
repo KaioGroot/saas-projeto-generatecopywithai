@@ -13,7 +13,16 @@ export default function Persuasivo() {
     const [responseia, setResponseIa] = useState([]);
     const [response, setResponse] = useState([]);
     const [descricao, setDescricao] = useState();
-    const gerado = document.querySelectorAll('#geradin');
+
+    //código para pegar o elemento
+    useEffect(() => {
+        if (typeof document !== 'undefined') {
+            const gerado = document.querySelector('#gerado');
+            if (gerado) {
+                setResponse(gerado.textContent);
+            }
+        }
+    }, [responseia]);
     //código para adicionar dados do recebido no localStorage
     useEffect(() => {
         if (response.length > 0) {
