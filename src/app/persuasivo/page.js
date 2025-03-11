@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Garante que o código só roda no cliente
 
 import React, { useState, useEffect } from 'react';
 import Gerarprompt from '@/action/gerarprompt';
@@ -10,12 +10,21 @@ export default function Persuasivo() {
     const [responseia, setResponseIa] = useState(null);
     const [response, setResponse] = useState('');
 
+    // Garante que o código só rode no cliente antes de acessar document ou localStorage
     useEffect(() => {
-    if (response.length > 0) {
-        localStorage.setItem('response', [response]);
-    }
-}, [response]);
+        if (typeof window !== 'undefined') {
+            const gerado = document.querySelector('#gerado');
+            if (gerado) {
+                setResponse(gerado.textContent);
+            }
+        }
+    }, [responseia]);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined' && response.length > 0) {
+            localStorage.setItem('response', response);
+        }
+    }, [response]);
 
     const gerar = (e) => {
         e.preventDefault();
