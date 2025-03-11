@@ -7,13 +7,16 @@ import { Player } from '@remotion/player';
 import { AbsoluteFill, Sequence } from 'remotion';
 import { motion } from 'framer-motion';
 
+
+const gerado = document.querySelectorAll('#geradin');
+
+
 export default function Persuasivo() {
     const [titulo, setTitulo] = useState();
     const [recebido, setRecebido] = useState();
     const [responseia, setResponseIa] = useState([]);
     const [response, setResponse] = useState([]);
     const [descricao, setDescricao] = useState();
-    const gerado = document.querySelectorAll('#geradin');
     //código para adicionar dados do recebido no localStorage
     useEffect(() => {
         if (response.length > 0) {
