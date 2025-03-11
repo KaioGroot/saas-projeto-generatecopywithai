@@ -11,13 +11,11 @@ export default function Persuasivo() {
     const [response, setResponse] = useState('');
 
     useEffect(() => {
-        if (typeof document !== 'undefined') {
-            const gerado = document.querySelector('#gerado');
-            if (gerado) {
-                setResponse(gerado.textContent);
-            }
-        }
-    }, [responseia]);
+    if (response.length > 0) {
+        localStorage.setItem('response', [response]);
+    }
+}, [response]);
+
 
     const gerar = (e) => {
         e.preventDefault();
