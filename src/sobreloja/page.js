@@ -7,7 +7,7 @@ export default function Sobreloja() {
 
     return (
         <div>
-            <Video
+            <MuxPlayer
                 autoPlay={true}
                 style={{ borderRadius: '10px', border: '4px solid purple' }}
                 id="player"
