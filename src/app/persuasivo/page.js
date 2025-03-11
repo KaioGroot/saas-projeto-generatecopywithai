@@ -1,5 +1,8 @@
 'use client'; // Garante que o código só roda no cliente
 
+export const dynamic = 'force-dynamic';
+
+
 import React, { useState, useEffect } from 'react';
 import Gerarprompt from '@/action/gerarprompt';
 
