@@ -1,5 +1,8 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { db } from '@/config/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 export default function Contato() {
     const [formData, setFormData] = useState({
@@ -14,6 +17,9 @@ export default function Contato() {
         console.log('Dados do formulário:', formData);
         alert('Mensagem enviada com sucesso!');
         setFormData({ nome: '', email: '', mensagem: '' });
+        //enviar para o firebase
+        const contatoRef = collection(db, 'contatos');
+        await addDoc(contatoRef, formData);
     };
 
     const handleChange = (e) => {
