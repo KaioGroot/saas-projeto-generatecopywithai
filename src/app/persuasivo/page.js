@@ -154,7 +154,7 @@ export default function Persuasivo() {
                                 </div>
                             ) : (
                                 <p className="text-gray-400">
-                                    O texto gerado aparecerá aqui. Preencha o formulário à esquerda e clique em "Gerar Texto".
+                                    O texto gerado aparecerá aqui. Preencha o formulário à esquerda e clique em Gerar Texto.
                                 </p>
                             )}
                         </div>
