@@ -28,34 +28,35 @@ export function AuthProvider({ children }) {
     }
 
     async function login(email, password) {
-        return signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        const token = await result.user.getIdToken();
+        document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+        return result;
     }
 
     async function loginWithGoogle() {
         const provider = new GoogleAuthProvider();
-        return signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, provider);
+        const token = await result.user.getIdToken();
+        document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+        return result;
     }
 
     async function logout() {
-        return signOut(auth);
+        await signOut(auth);
+        document.cookie = 'session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuário está logado
+                console.log('Usuário autenticado:', user.email);
                 setCurrentUser(user);
-
-                // Cria um token de sessão
                 const token = await user.getIdToken();
-
-                // Define o cookie de sessão com configurações mais permissivas
-                document.cookie = `session=${token}; path=/; max-age=3600`;
+                document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
             } else {
-                // Usuário está deslogado
+                console.log('Usuário não autenticado');
                 setCurrentUser(null);
-
-                // Remove o cookie de sessão
                 document.cookie = 'session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
             }
             setLoading(false);
@@ -67,6 +68,7 @@ export function AuthProvider({ children }) {
     // Redireciona após o login
     useEffect(() => {
         if (currentUser && !loading) {
+            console.log('Redirecionando usuário autenticado');
             const from = searchParams.get('from') || '/persuasivo';
             router.push(from);
         }
