@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Login() {
@@ -13,6 +13,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const { login, loginWithGoogle } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,7 +30,8 @@ export default function Login() {
 
         try {
             await login(formData.email, formData.senha);
-            router.push('/persuasivo');
+            const from = searchParams.get('from') || '/persuasivo';
+            router.push(from);
         } catch (error) {
             setError('Email ou senha inválidos');
             console.error('Erro no login:', error);
@@ -42,7 +44,8 @@ export default function Login() {
         try {
             setLoading(true);
             await loginWithGoogle();
-            router.push('/persuasivo');
+            const from = searchParams.get('from') || '/persuasivo';
+            router.push(from);
         } catch (error) {
             setError('Erro ao fazer login com Google');
             console.error('Erro no login com Google:', error);
