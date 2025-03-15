@@ -8,11 +8,12 @@ export default function Sobreloja() {
     return (
         <div>
             <MuxPlayer
-                autoPlay={true}
-                style={{ borderRadius: '10px', border: '4px solid purple' }}
-                id="player"
-                src={'_next-video/Entrada.mp4'}
-                type="video/mp4"
+                playbackId="3ZHWKjJSdLi5rOvQHef5BwXKcbP9I1HobBZRn4YwdOg"
+                metadataVideoTitle="Placeholder (optional)"
+                metadata-viewer-user-id="Placeholder (optional)"
+                primary-color="#ffffff"
+                secondary-color="#000000"
+                accent-color="#fa50b5"
             />
         </div>
     );
