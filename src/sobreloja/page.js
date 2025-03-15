@@ -8,12 +8,18 @@ export default function Sobreloja() {
     return (
         <div>
             <MuxPlayer
-                autoPlay={true}
-                style={{ borderRadius: '10px', border: '4px solid purple' }}
-                id="player"
-                src={'_next-video/Entrada.mp4'}
-                type="video/mp4"
-            />
+                        streamType="on-demand"
+                        playbackId="3ZHWKjJSdLi5rOvQHef5BwXKcbP9I1HobBZRn4YwdOg" // Substitua pelo ID que você obtiver do Mux
+                        autoPlay
+                        muted
+                        loop
+                        preload="auto"
+                        className="w-full rounded-lg border-4 border-purple-500"
+                        metadata={{
+                            video_title: 'Vídeo de Apresentação',
+                            player_name: 'Mux Player',
+                        }}
+                    />
         </div>
     );
 }
