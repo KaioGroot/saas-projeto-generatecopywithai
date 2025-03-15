@@ -23,53 +23,62 @@ export function AuthProvider({ children }) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    const setCookie = async (user) => {
+        if (user) {
+            const token = await user.getIdToken();
+            document.cookie = `session=${token}; path=/; max-age=3600`;
+        } else {
+            document.cookie = 'session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+    };
+
     async function signup(email, password) {
-        return createUserWithEmailAndPassword(auth, email, password);
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        await setCookie(result.user);
+        return result;
     }
 
     async function login(email, password) {
         const result = await signInWithEmailAndPassword(auth, email, password);
-        const token = await result.user.getIdToken();
-        document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+        await setCookie(result.user);
         return result;
     }
 
     async function loginWithGoogle() {
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth, provider);
-        const token = await result.user.getIdToken();
-        document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+        await setCookie(result.user);
         return result;
     }
 
     async function logout() {
         await signOut(auth);
-        document.cookie = 'session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        await setCookie(null);
+        router.push('/login');
     }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            console.log('Estado de autenticação mudou:', user ? 'Autenticado' : 'Não autenticado');
+
             if (user) {
-                console.log('Usuário autenticado:', user.email);
                 setCurrentUser(user);
-                const token = await user.getIdToken();
-                document.cookie = `session=${token}; path=/; max-age=3600; SameSite=Lax`;
+                await setCookie(user);
             } else {
-                console.log('Usuário não autenticado');
                 setCurrentUser(null);
-                document.cookie = 'session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                await setCookie(null);
             }
+
             setLoading(false);
         });
 
-        return unsubscribe;
+        return () => unsubscribe();
     }, []);
 
-    // Redireciona após o login
     useEffect(() => {
         if (currentUser && !loading) {
-            console.log('Redirecionando usuário autenticado');
             const from = searchParams.get('from') || '/persuasivo';
+            console.log('Redirecionando para:', from);
             router.push(from);
         }
     }, [currentUser, loading, router, searchParams]);
