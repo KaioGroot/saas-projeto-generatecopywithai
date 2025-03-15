@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/core": "^0.34.2",
     "@fal-ai/client": "^1.2.3",
     "@google/generative-ai": "^0.21.0",
     "@mux/mux-player-react": "^3.3.0",
@@ -17,8 +18,10 @@
     "@stripe/stripe-js": "^5.6.0",
     "axios": "^1.7.9",
     "file-loader": "^6.2.0",
+    "firebase": "^11.4.0",
     "framer-motion": "^12.4.3",
     "next": "^15.1.7",
+    "next-auth": "^4.24.11",
     "next-video": "^2.0.4",
     "nodemailer": "^6.10.0",
     "react": "^19.0.0",
