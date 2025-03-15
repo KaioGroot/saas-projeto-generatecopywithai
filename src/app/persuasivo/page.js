@@ -21,22 +21,51 @@ export default function Persuasivo() {
     const [textoGerado, setTextoGerado] = useState('');
     const [error, setError] = useState('');
     const [showTextosSalvos, setShowTextosSalvos] = useState(false);
+    const [isAuthChecking, setIsAuthChecking] = useState(true);
 
     useEffect(() => {
-        // Verifica autenticação ao montar o componente
+        let timeoutId;
+
         const checkAuth = async () => {
+            console.log('Verificando autenticação...');
+
             if (!currentUser) {
-                console.log('Usuário não autenticado, redirecionando para login');
-                router.push('/login');
-                return;
+                console.log('Usuário não autenticado, aguardando...');
+                // Aguarda um pouco para dar tempo do Firebase inicializar
+                timeoutId = setTimeout(() => {
+                    if (!currentUser) {
+                        console.log('Usuário ainda não autenticado, redirecionando...');
+                        router.push('/login');
+                    }
+                }, 1500);
+            } else {
+                console.log('Usuário autenticado:', currentUser.email);
+                setIsAuthChecking(false);
             }
-            console.log('Usuário autenticado:', currentUser.email);
         };
 
         checkAuth();
+
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
     }, [currentUser, router]);
 
-    // Se não houver usuário, não renderiza o conteúdo
+    // Mostra um loading enquanto verifica a autenticação
+    if (isAuthChecking) {
+        return (
+            <div className="min-h-screen bg-[#16161d] text-white pt-20 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+                    <p className="mt-4 text-lg">Verificando autenticação...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Se não houver usuário após a verificação, não renderiza o conteúdo
     if (!currentUser) {
         return null;
     }
