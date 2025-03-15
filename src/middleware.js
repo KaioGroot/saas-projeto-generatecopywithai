@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/firebase/config';
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
 
-    // Verifica se o usuário está autenticado no Firebase
+    // Verifica se o usuário está autenticado através do cookie
     const session = request.cookies.get('session')?.value;
 
     // Se tentar acessar /persuasivo sem estar autenticado

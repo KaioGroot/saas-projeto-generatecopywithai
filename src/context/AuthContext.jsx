@@ -49,8 +49,8 @@ export function AuthProvider({ children }) {
                 // Cria um token de sessão
                 const token = await user.getIdToken();
 
-                // Define o cookie de sessão com atributos de segurança
-                document.cookie = `session=${token}; path=/; secure; samesite=strict; max-age=3600`;
+                // Define o cookie de sessão com configurações mais permissivas
+                document.cookie = `session=${token}; path=/; max-age=3600`;
             } else {
                 // Usuário está deslogado
                 setCurrentUser(null);
