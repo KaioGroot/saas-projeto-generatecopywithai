@@ -9,7 +9,7 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
 } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const AuthContext = createContext();
 
@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     async function signup(email, password) {
         return createUserWithEmailAndPassword(auth, email, password);
@@ -48,8 +49,8 @@ export function AuthProvider({ children }) {
                 // Cria um token de sessão
                 const token = await user.getIdToken();
 
-                // Define o cookie de sessão
-                document.cookie = `session=${token}; path=/`;
+                // Define o cookie de sessão com atributos de segurança
+                document.cookie = `session=${token}; path=/; secure; samesite=strict; max-age=3600`;
             } else {
                 // Usuário está deslogado
                 setCurrentUser(null);
@@ -62,6 +63,14 @@ export function AuthProvider({ children }) {
 
         return unsubscribe;
     }, []);
+
+    // Redireciona após o login
+    useEffect(() => {
+        if (currentUser && !loading) {
+            const from = searchParams.get('from') || '/persuasivo';
+            router.push(from);
+        }
+    }, [currentUser, loading, router, searchParams]);
 
     const value = {
         currentUser,

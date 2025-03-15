@@ -10,13 +10,20 @@ export async function middleware(request) {
     // Se tentar acessar /persuasivo sem estar autenticado
     if (pathname === '/persuasivo') {
         if (!session) {
-            return NextResponse.redirect(new URL('/login', request.url));
+            const redirectUrl = new URL('/login', request.url);
+            redirectUrl.searchParams.set('from', pathname);
+            return NextResponse.redirect(redirectUrl);
         }
+    }
+
+    // Se tentar acessar /login ou /signup já estando autenticado
+    if ((pathname === '/login' || pathname === '/signup') && session) {
+        return NextResponse.redirect(new URL('/persuasivo', request.url));
     }
 
     return NextResponse.next();
 }
 
 export const config = {
-    matcher: ['/persuasivo'],
+    matcher: ['/persuasivo', '/login', '/signup'],
 };
