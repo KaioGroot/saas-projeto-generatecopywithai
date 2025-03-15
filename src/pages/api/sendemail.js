@@ -9,7 +9,7 @@ export default function handler(req, res) {
             service: 'gmail',
             auth: {
                 user: 'kaiomagalhaesxp@gmail.com',
-                pass: 'fadal&cn659x',
+                pass: '[YOURPASS]',
             },
         });
 
