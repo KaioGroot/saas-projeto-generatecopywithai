@@ -23,11 +23,20 @@ export default function Persuasivo() {
     const [showTextosSalvos, setShowTextosSalvos] = useState(false);
 
     useEffect(() => {
-        if (!currentUser) {
-            router.push('/login');
-        }
+        // Verifica autenticação ao montar o componente
+        const checkAuth = async () => {
+            if (!currentUser) {
+                console.log('Usuário não autenticado, redirecionando para login');
+                router.push('/login');
+                return;
+            }
+            console.log('Usuário autenticado:', currentUser.email);
+        };
+
+        checkAuth();
     }, [currentUser, router]);
 
+    // Se não houver usuário, não renderiza o conteúdo
     if (!currentUser) {
         return null;
     }
