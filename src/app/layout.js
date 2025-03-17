@@ -18,56 +18,6 @@ const geistMono = Geist_Mono({
     subsets: ['latin'],
 });
 
-export const metadata = {
-    title: 'IA Persuasiva - Transforme suas vendas com Inteligência Artificial',
-    description:
-        'Crie conteúdo persuasivo e aumente suas vendas usando o poder da Inteligência Artificial. Gere textos, vídeos e imagens otimizados para conversão.',
-    keywords: 'IA, inteligência artificial, vendas, marketing, copywriting, automação, persuasão',
-    authors: [{ name: 'IA Persuasiva', url: 'https://iapersuasiva.com.br' }],
-    creator: 'IA Persuasiva',
-    publisher: 'IA Persuasiva',
-    openGraph: {
-        type: 'website',
-        locale: 'pt_BR',
-        url: 'https://iapersuasiva.com.br',
-        site_name: 'IA Persuasiva',
-        title: 'IA Persuasiva - Transforme suas vendas com Inteligência Artificial',
-        description: 'Crie conteúdo persuasivo e aumente suas vendas usando o poder da Inteligência Artificial.',
-        images: [
-            {
-                url: '/og-image.jpg',
-                width: 1200,
-                height: 630,
-                alt: 'IA Persuasiva Preview',
-            },
-        ],
-    },
-    twitter: {
-        card: 'summary_large_image',
-        site: '@iapersuasiva',
-        creator: '@iapersuasiva',
-        title: 'IA Persuasiva - Transforme suas vendas com Inteligência Artificial',
-        description: 'Crie conteúdo persuasivo e aumente suas vendas usando o poder da Inteligência Artificial.',
-        images: ['/og-image.jpg'],
-    },
-    robots: {
-        index: true,
-        follow: true,
-        googleBot: {
-            index: true,
-            follow: true,
-            'max-video-preview': -1,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-        },
-    },
-    verification: {
-        google: 'your-google-verification-code',
-        yandex: 'your-yandex-verification-code',
-        yahoo: 'your-yahoo-verification-code',
-    },
-};
-
 export default function RootLayout({ children }) {
     return (
         <html lang="pt-BR">
