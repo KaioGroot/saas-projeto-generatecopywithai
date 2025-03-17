@@ -5,7 +5,11 @@ import { FaInstagram } from 'react-icons/fa';
 
 export default function InstagramLoginButton() {
     const handleInstagramLogin = () => {
-        // Redireciona diretamente para a página de login do Facebook
+        // Usando o ID correto do aplicativo Instagram
+        const INSTAGRAM_APP_ID = '2019139641939405';
+        const REDIRECT_URI = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app/api/auth/instagram/callback';
+
+        // Lista de permissões necessárias
         const scopes = [
             'instagram_basic',
             'instagram_content_publish',
@@ -17,13 +21,12 @@ export default function InstagramLoginButton() {
             'public_profile',
         ].join(',');
 
-        const FACEBOOK_APP_ID = '1019230419279328';
-        const REDIRECT_URI = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app/api/auth/instagram/callback';
-
-        const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(
+        // Constrói a URL de autorização usando o ID do Instagram
+        const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(
             REDIRECT_URI
         )}&scope=${scopes}&response_type=code`;
 
+        // Redireciona para a página de autorização do Instagram
         window.location.href = authUrl;
     };
 
