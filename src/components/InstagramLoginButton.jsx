@@ -5,19 +5,19 @@ import { FaInstagram } from 'react-icons/fa';
 
 export default function InstagramLoginButton() {
     const handleInstagramLogin = () => {
-        // Usando o ID correto do aplicativo Instagram
-        const INSTAGRAM_APP_ID = '2019139641939405';
+        // Usando o ID do aplicativo Facebook
+        const FACEBOOK_APP_ID = '1019230419279328';
         const REDIRECT_URI = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app/api/auth/instagram/callback';
 
-        // Escopos corretos para Instagram Basic Display API
-        const scopes = ['user_profile', 'user_media'].join(',');
+        // Escopos necessários para Instagram Graph API via Facebook
+        const scopes = ['instagram_basic', 'pages_show_list', 'instagram_content_publish'].join(',');
 
-        // Constrói a URL de autorização usando o ID do Instagram
-        const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(
+        // Constrói a URL de autorização do Facebook
+        const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(
             REDIRECT_URI
         )}&scope=${scopes}&response_type=code`;
 
-        // Redireciona para a página de autorização do Instagram
+        // Redireciona para a página de autorização do Facebook
         window.location.href = authUrl;
     };
 
