@@ -2,6 +2,7 @@
 
 import { useTheme } from '@/context/ThemeContext';
 import SocialMediaManager from '@/components/SocialMediaManager';
+import InstagramLoginButton from '@/components/InstagramLoginButton';
 
 export default function SocialPage() {
     const { isDarkMode } = useTheme();
