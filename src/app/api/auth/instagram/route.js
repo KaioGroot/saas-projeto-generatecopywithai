@@ -6,12 +6,24 @@ const INSTAGRAM_CLIENT_ID = '1402201067133597'; // Client ID fixo
 
 export async function GET() {
     try {
-        // Constrói a URL de autorização do Instagram
-        const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-            `${BASE_URL}/api/auth/instagram/callback`
-        )}&scope=user_profile,user_media&response_type=code`;
+        // Lista de permissões necessárias
+        const scopes = [
+            'instagram_basic',
+            'instagram_content_publish',
+            'instagram_manage_comments',
+            'instagram_manage_insights',
+            'pages_show_list',
+            'pages_read_engagement',
+            'pages_manage_posts',
+            'public_profile',
+        ].join(',');
 
-        // Redireciona o usuário para a página de autorização do Instagram
+        // Constrói a URL de autorização do Facebook (não do Instagram diretamente)
+        const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+            `${BASE_URL}/api/auth/instagram/callback`
+        )}&scope=${scopes}&response_type=code`;
+
+        // Redireciona o usuário para a página de autorização do Facebook
         return NextResponse.redirect(authUrl);
     } catch (error) {
         console.error('Erro ao iniciar autenticação:', error);
