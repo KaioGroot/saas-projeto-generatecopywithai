@@ -1,5 +1,7 @@
 // URL de autenticação do Facebook (que inclui Instagram)
-export const FB_AUTH_URL = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_APP_URL}/api/auth/instagram/callback&scope=instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement,instagram_manage_insights&response_type=code`;
+export const FB_AUTH_URL = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${'1019230419279328'}&redirect_uri=${
+    process.env.NEXT_PUBLIC_APP_URL
+}/api/auth/instagram/callback&scope=instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement,instagram_manage_insights&response_type=code`;
 
 export async function getFacebookAuthUrl() {
     return FB_AUTH_URL;
