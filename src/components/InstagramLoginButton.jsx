@@ -9,17 +9,8 @@ export default function InstagramLoginButton() {
         const INSTAGRAM_APP_ID = '2019139641939405';
         const REDIRECT_URI = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app/api/auth/instagram/callback';
 
-        // Lista de permissões necessárias
-        const scopes = [
-            'instagram_basic',
-            'instagram_content_publish',
-            'instagram_manage_comments',
-            'instagram_manage_insights',
-            'pages_show_list',
-            'pages_read_engagement',
-            'pages_manage_posts',
-            'public_profile',
-        ].join(',');
+        // Escopos corretos para Instagram Basic Display API
+        const scopes = ['user_profile', 'user_media'].join(',');
 
         // Constrói a URL de autorização usando o ID do Instagram
         const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(
