@@ -6,27 +6,10 @@ import { FaInstagram } from 'react-icons/fa';
 export default function InstagramLoginButton() {
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleInstagramLogin = async () => {
-        try {
-            setIsLoading(true);
-            // Faz a requisição para a rota de autenticação
-            const response = await fetch('/api/auth/instagram');
-
-            if (response.ok) {
-                // Se a resposta incluir uma URL de redirecionamento nos headers
-                const redirectUrl = response.headers.get('location');
-                if (redirectUrl) {
-                    // Redireciona para a URL do Facebook
-                    window.location.href = redirectUrl;
-                }
-            } else {
-                console.error('Erro ao iniciar autenticação do Instagram');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-        } finally {
-            setIsLoading(false);
-        }
+    const handleInstagramLogin = () => {
+        setIsLoading(true);
+        // Redireciona diretamente para a rota de autenticação
+        window.location.assign('/api/auth/instagram');
     };
 
     return (

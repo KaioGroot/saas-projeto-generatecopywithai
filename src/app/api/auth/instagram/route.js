@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getFacebookAuthUrl, getFacebookPages, getInstagramAccount } from '@/lib/instagram';
 
+// Certifique-se de que este domínio está adicionado nas configurações do seu app no Facebook Developers
 const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
 const FACEBOOK_APP_ID = '1019230419279328'; // ID correto do seu aplicativo do Facebook
 
@@ -23,16 +24,8 @@ export async function GET(request) {
             `${BASE_URL}/api/auth/instagram/callback`
         )}&scope=${scopes}&response_type=code&state=${Math.random().toString(36).substring(7)}`;
 
-        // Retorna um redirecionamento com os headers corretos
-        return new NextResponse(null, {
-            status: 307,
-            headers: {
-                Location: authUrl,
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            },
-        });
+        // Redireciona diretamente para o Facebook
+        return NextResponse.redirect(authUrl);
     } catch (error) {
         console.error('Erro ao iniciar autenticação:', error);
         return NextResponse.json({ error: 'Erro ao iniciar autenticação' }, { status: 500 });
