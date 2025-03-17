@@ -7,6 +7,8 @@ const VERIFY_TOKEN = 'meu_token_secreto_123';
 // URL base do seu projeto no Vercel
 const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
 
+const FACEBOOK_APP_ID = '1019230419279328';
+
 export async function GET(request) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -30,37 +32,79 @@ export async function GET(request) {
 
         // Se não for verificação, processa o código de autorização do OAuth
         const code = searchParams.get('code');
+        const error = searchParams.get('error');
         if (!code) {
             return NextResponse.redirect(new URL('/error?message=Código não fornecido', request.url));
         }
 
-        // Troca o código pelo token de acesso do Instagram
-        const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
-            method: 'POST',
+        // Se houver erro ou o usuário cancelou
+        if (error || !code) {
+            console.error('Erro na autenticação:', error);
+            return NextResponse.redirect('/social?error=auth_failed');
+        }
+
+        // Troca o código pelo token de acesso
+        const tokenResponse = await fetch('https://graph.facebook.com/v18.0/oauth/access_token', {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
             body: new URLSearchParams({
-                client_id: process.env.INSTAGRAM_CLIENT_ID,
+                client_id: FACEBOOK_APP_ID,
                 client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
-                grant_type: 'authorization_code',
                 redirect_uri: `${BASE_URL}/api/auth/instagram/callback`,
-                code: code,
+                code,
             }),
         });
 
         if (!tokenResponse.ok) {
-            const error = await tokenResponse.text();
-            console.error('Erro ao obter token:', error);
-            return NextResponse.redirect(new URL('/error?message=Erro ao obter token', request.url));
+            console.error('Erro ao obter token:', await tokenResponse.text());
+            return NextResponse.redirect('/social?error=token_failed');
         }
 
-        const { access_token, user_id } = await tokenResponse.json();
+        const tokenData = await tokenResponse.json();
 
-        // Redireciona para a página de sucesso com o token de acesso
-        return NextResponse.redirect(new URL(`/success?token=${access_token}&user_id=${user_id}`, request.url));
+        // Busca as páginas do Facebook do usuário
+        const pagesResponse = await fetch(`https://graph.facebook.com/v18.0/me/accounts?access_token=${tokenData.access_token}`);
+        const pagesData = await pagesResponse.json();
+
+        if (!pagesData.data || pagesData.data.length === 0) {
+            return NextResponse.redirect('/social?error=no_pages');
+        }
+
+        // Para cada página, busca a conta do Instagram Business associada
+        const instagramAccounts = await Promise.all(
+            pagesData.data.map(async (page) => {
+                const instagramResponse = await fetch(
+                    `https://graph.facebook.com/v18.0/${page.id}?fields=instagram_business_account&access_token=${tokenData.access_token}`
+                );
+                const instagramData = await instagramResponse.json();
+
+                if (instagramData.instagram_business_account) {
+                    return {
+                        pageId: page.id,
+                        pageName: page.name,
+                        instagramAccountId: instagramData.instagram_business_account.id,
+                    };
+                }
+                return null;
+            })
+        );
+
+        // Filtra as contas nulas
+        const validInstagramAccounts = instagramAccounts.filter((account) => account !== null);
+
+        if (validInstagramAccounts.length === 0) {
+            return NextResponse.redirect('/social?error=no_instagram');
+        }
+
+        // Salva os dados na sessão ou banco de dados
+        // TODO: Implementar armazenamento dos dados
+
+        // Redireciona de volta para a página social com sucesso
+        return NextResponse.redirect('/social?success=true');
     } catch (error) {
         console.error('Erro no callback:', error);
-        return NextResponse.redirect(new URL('/error?message=Erro interno', request.url));
+        return NextResponse.redirect('/social?error=unknown');
     }
 }
