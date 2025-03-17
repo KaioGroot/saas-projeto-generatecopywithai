@@ -4,7 +4,7 @@ import { getFacebookAuthUrl, getFacebookPages, getInstagramAccount } from '@/lib
 const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
 const FACEBOOK_APP_ID = '1019230419279328'; // ID correto do seu aplicativo do Facebook
 
-export async function GET() {
+export async function GET(request) {
     try {
         // Lista de permissões necessárias
         const scopes = [
@@ -23,12 +23,32 @@ export async function GET() {
             `${BASE_URL}/api/auth/instagram/callback`
         )}&scope=${scopes}&response_type=code&state=${Math.random().toString(36).substring(7)}`;
 
-        // Redireciona o usuário para a página de autorização do Facebook
-        return NextResponse.redirect(authUrl);
+        // Retorna um redirecionamento com os headers corretos
+        return new NextResponse(null, {
+            status: 307,
+            headers: {
+                Location: authUrl,
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+            },
+        });
     } catch (error) {
         console.error('Erro ao iniciar autenticação:', error);
-        return NextResponse.redirect(new URL('/error?message=Erro ao iniciar autenticação', request.url));
+        return NextResponse.json({ error: 'Erro ao iniciar autenticação' }, { status: 500 });
     }
+}
+
+// Adiciona suporte para preflight requests
+export async function OPTIONS(request) {
+    return new NextResponse(null, {
+        status: 200,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+    });
 }
 
 export async function POST(request) {
