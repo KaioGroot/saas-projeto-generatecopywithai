@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getFacebookAuthUrl, getFacebookPages, getInstagramAccount } from '@/lib/instagram';
 
+const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
+const INSTAGRAM_CLIENT_ID = '1402201067133597'; // Client ID fixo
+
 export async function GET() {
     try {
-        const authUrl = await getFacebookAuthUrl();
-        return NextResponse.json({ url: authUrl });
+        // Constrói a URL de autorização do Instagram
+        const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+            `${BASE_URL}/api/auth/instagram/callback`
+        )}&scope=user_profile,user_media&response_type=code`;
+
+        // Redireciona o usuário para a página de autorização do Instagram
+        return NextResponse.redirect(authUrl);
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('Erro ao iniciar autenticação:', error);
+        return NextResponse.redirect(new URL('/error?message=Erro ao iniciar autenticação', request.url));
     }
 }
 
@@ -21,9 +30,9 @@ export async function POST(request) {
                 'Content-Type': 'application/json',
             },
             body: new URLSearchParams({
-                client_id: process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID,
+                client_id: INSTAGRAM_CLIENT_ID, // Usando a constante aqui também
                 client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
-                redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/instagram/callback`,
+                redirect_uri: `${BASE_URL}/api/auth/instagram/callback`,
                 code,
             }),
         });
