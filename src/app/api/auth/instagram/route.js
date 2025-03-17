@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getFacebookAuthUrl, getFacebookPages, getInstagramAccount } from '@/lib/instagram';
 
 const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
-const INSTAGRAM_CLIENT_ID = '1402201067133597'; // Client ID fixo
+const FACEBOOK_APP_ID = '1019230419279328'; // ID correto do seu aplicativo do Facebook
 
 export async function GET() {
     try {
@@ -18,10 +18,10 @@ export async function GET() {
             'public_profile',
         ].join(',');
 
-        // Constrói a URL de autorização do Facebook (não do Instagram diretamente)
-        const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${INSTAGRAM_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+        // Constrói a URL de autorização do Facebook
+        const authUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(
             `${BASE_URL}/api/auth/instagram/callback`
-        )}&scope=${scopes}&response_type=code`;
+        )}&scope=${scopes}&response_type=code&state=${Math.random().toString(36).substring(7)}`;
 
         // Redireciona o usuário para a página de autorização do Facebook
         return NextResponse.redirect(authUrl);
@@ -42,7 +42,7 @@ export async function POST(request) {
                 'Content-Type': 'application/json',
             },
             body: new URLSearchParams({
-                client_id: INSTAGRAM_CLIENT_ID, // Usando a constante aqui também
+                client_id: FACEBOOK_APP_ID, // Usando a constante aqui também
                 client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
                 redirect_uri: `${BASE_URL}/api/auth/instagram/callback`,
                 code,
