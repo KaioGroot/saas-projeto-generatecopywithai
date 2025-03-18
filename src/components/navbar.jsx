@@ -68,6 +68,16 @@ export default function Navbar() {
             href: '/templates',
             icon: DocumentTextIcon,
         },
+        {
+            name: 'Preços',
+            href: '/pricing',
+            icon: Squares2X2Icon,
+        },
+        {
+            name: 'Redes Sociais',
+            href: '/social',
+            icon: ChatBubbleLeftRightIcon,
+        },
     ];
 
     return (
