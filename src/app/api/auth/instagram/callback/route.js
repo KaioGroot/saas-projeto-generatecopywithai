@@ -7,11 +7,15 @@ const VERIFY_TOKEN = 'meu_token_secreto_123';
 // URL base do seu projeto no Vercel
 const BASE_URL = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app';
 
-const INSTAGRAM_APP_ID = '2019139641939405';
+const INSTAGRAM_APP_ID = '1019230419279328';
 
 export async function GET(request) {
     try {
-        const searchParams = new URL(request.url).searchParams;
+        // Remove o fragmento #_=_ da URL se existir
+        const url = new URL(request.url);
+        const cleanUrl = url.toString().split('#')[0];
+        const searchParams = new URL(cleanUrl).searchParams;
+
         const code = searchParams.get('code');
         const error = searchParams.get('error');
 

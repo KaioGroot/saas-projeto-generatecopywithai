@@ -20,7 +20,7 @@ export default function Mouse() {
         <div className="mouse">
             <div
                 id="cursor"
-                className="cursor fixed z-50 w-5 h-5 bg-white rounded-full shadow-lg before:absolute before:inset-0 before:bg-black before:rounded-full before:opacity-50 before:blur-sm before:duration-300 before:transition-all before:scale-0 hover:before:scale-[1.2] hover:before:opacity-100 before:hover:scale-[1.4] before:hover:opacity-100"
+                className="cursor fixed  w-5 h-5 bg-white rounded-full shadow-lg before:absolute before:inset-0 before:bg-black before:rounded-full before:opacity-50 before:blur-sm before:duration-300 before:transition-all before:scale-0 hover:before:scale-[1.2] hover:before:opacity-100 before:hover:scale-[1.4] before:hover:opacity-100"
             >
                 <div className="cursor-waves"></div>
                 <div className="cursor-blobs"></div>
