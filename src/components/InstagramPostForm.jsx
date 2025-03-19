@@ -21,21 +21,28 @@ export default function InstagramPostForm() {
     };
 
     const uploadToImgBB = async (file) => {
-        const formData = new FormData();
-        formData.append('image', file);
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
 
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${'2d300aec75e043ab714bf09453497004'}`, {
-            method: 'POST',
-            body: formData,
-        });
+            console.log('Fazendo upload para o ImgBB...');
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${'2d300aec75e043ab714bf09453497004'}`, {
+                method: 'POST',
+                body: formData,
+            });
 
-        const data = await response.json();
+            const data = await response.json();
+            console.log('Resposta do ImgBB:', data);
 
-        if (!response.ok) {
-            throw new Error('Erro ao fazer upload da imagem');
+            if (!response.ok) {
+                throw new Error('Erro ao fazer upload da imagem');
+            }
+
+            return data.data.url;
+        } catch (error) {
+            console.error('Erro no upload para ImgBB:', error);
+            throw new Error('Erro ao fazer upload da imagem para o servidor');
         }
-
-        return data.data.url;
     };
 
     const handleSubmit = async (e) => {
@@ -57,7 +64,9 @@ export default function InstagramPostForm() {
             }
 
             // Faz upload da imagem para o ImgBB
+            console.log('Iniciando upload da imagem...');
             const publicImageUrl = await uploadToImgBB(image);
+            console.log('URL da imagem:', publicImageUrl);
 
             // Cria o FormData com os dados
             const formData = new FormData();
@@ -65,12 +74,14 @@ export default function InstagramPostForm() {
             formData.append('caption', caption);
             formData.append('accessToken', accessToken);
 
+            console.log('Enviando dados para a API...');
             const response = await fetch('/api/instagram/create-post', {
                 method: 'POST',
                 body: formData,
             });
 
             const data = await response.json();
+            console.log('Resposta da API:', data);
 
             if (!response.ok) {
                 throw new Error(data.error || 'Erro ao criar post');
@@ -81,6 +92,7 @@ export default function InstagramPostForm() {
             setImageUrl('');
             setCaption('');
         } catch (err) {
+            console.error('Erro completo:', err);
             setError(err.message);
         } finally {
             setLoading(false);
