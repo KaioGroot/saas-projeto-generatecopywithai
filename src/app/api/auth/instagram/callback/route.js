@@ -75,8 +75,9 @@ export async function GET(request) {
 
         console.log('Dados do usuário:', userData); // Log para debug
 
-        // Redireciona de volta para a página social com sucesso
-        return NextResponse.redirect(`${BASE_URL}/social?success=true`);
+        // Salva o token de acesso (você precisará implementar um sistema de armazenamento de tokens)
+        // Por enquanto, vamos apenas redirecionar com o token na URL (não recomendado para produção)
+        return NextResponse.redirect(`${BASE_URL}/social?success=true&token=${tokenData.access_token}`);
     } catch (error) {
         console.error('Erro no callback:', error);
         return NextResponse.redirect(`${BASE_URL}/social?error=unknown`);
