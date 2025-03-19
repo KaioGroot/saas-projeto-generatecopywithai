@@ -11,6 +11,8 @@ export async function POST(request) {
             imageUrl,
             caption,
             hasToken: !!accessToken,
+            tokenLength: accessToken?.length,
+            tokenStart: accessToken?.substring(0, 10) + '...',
         });
 
         if (!imageUrl) {

@@ -31,6 +31,7 @@ export async function GET(request) {
             return NextResponse.redirect(`${BASE_URL}/social?error=config_failed`);
         }
 
+        // 1. Primeiro, obtém o token de acesso básico
         const params = new URLSearchParams({
             client_id: INSTAGRAM_APP_ID,
             client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
@@ -58,10 +59,23 @@ export async function GET(request) {
         }
 
         const tokenData = JSON.parse(responseText);
-        console.log('Token recebido:', tokenData);
+        console.log('Token básico recebido:', tokenData);
 
-        // Busca informações do usuário do Instagram
-        const userResponse = await fetch(`https://graph.instagram.com/me?fields=id,username&access_token=${tokenData.access_token}`);
+        // 2. Agora, obtém o token de longa duração
+        const longLivedTokenResponse = await fetch(
+            `https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${INSTAGRAM_APP_ID}&client_secret=${process.env.INSTAGRAM_CLIENT_SECRET}&fb_exchange_token=${tokenData.access_token}`
+        );
+
+        const longLivedTokenData = await longLivedTokenResponse.json();
+        console.log('Token de longa duração:', longLivedTokenData);
+
+        if (!longLivedTokenResponse.ok) {
+            console.error('Erro ao obter token de longa duração:', longLivedTokenData);
+            return NextResponse.redirect(`${BASE_URL}/social?error=long_token_failed`);
+        }
+
+        // 3. Busca informações do usuário do Instagram
+        const userResponse = await fetch(`https://graph.instagram.com/me?fields=id,username&access_token=${longLivedTokenData.access_token}`);
         const userData = await userResponse.json();
 
         if (!userResponse.ok) {
@@ -71,8 +85,8 @@ export async function GET(request) {
 
         console.log('Dados do usuário:', userData);
 
-        // Redireciona para a página de sucesso com o token
-        return NextResponse.redirect(`${BASE_URL}/social?success=true&token=${tokenData.access_token}`);
+        // 4. Redireciona para a página de sucesso com o token de longa duração
+        return NextResponse.redirect(`${BASE_URL}/social?success=true&token=${longLivedTokenData.access_token}`);
     } catch (error) {
         console.error('Erro no callback:', error);
         return NextResponse.redirect(`${BASE_URL}/social?error=unknown`);
