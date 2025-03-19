@@ -23,9 +23,47 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Usuário não está autenticado' }, { status: 401 });
         }
 
+        // Primeiro, obtém o ID da conta do Instagram Business
+        console.log('Buscando ID da conta do Instagram...');
+        const accountResponse = await fetch(`https://graph.facebook.com/v18.0/me/accounts?access_token=${accessToken}`);
+        const accountData = await accountResponse.json();
+
+        if (!accountResponse.ok) {
+            console.error('Erro ao obter contas:', accountData);
+            return NextResponse.json({ error: `Erro ao obter contas: ${accountData.error?.message || 'Erro desconhecido'}` }, { status: 500 });
+        }
+
+        if (!accountData.data || accountData.data.length === 0) {
+            return NextResponse.json({ error: 'Nenhuma conta do Instagram Business encontrada' }, { status: 400 });
+        }
+
+        const pageId = accountData.data[0].id;
+        console.log('ID da página:', pageId);
+
+        // Agora, obtém o ID da conta do Instagram vinculada à página
+        const instagramResponse = await fetch(
+            `https://graph.facebook.com/v18.0/${pageId}?fields=instagram_business_account&access_token=${accessToken}`
+        );
+        const instagramData = await instagramResponse.json();
+
+        if (!instagramResponse.ok) {
+            console.error('Erro ao obter conta do Instagram:', instagramData);
+            return NextResponse.json(
+                { error: `Erro ao obter conta do Instagram: ${instagramData.error?.message || 'Erro desconhecido'}` },
+                { status: 500 }
+            );
+        }
+
+        const instagramAccountId = instagramData.instagram_business_account?.id;
+        if (!instagramAccountId) {
+            return NextResponse.json({ error: 'Conta do Instagram não está vinculada à página do Facebook' }, { status: 400 });
+        }
+
+        console.log('ID da conta do Instagram:', instagramAccountId);
+
         // Cria o post no Instagram usando a URL da imagem
         console.log('Tentando criar post no Instagram...');
-        const createPostResponse = await fetch(`https://graph.facebook.com/v18.0/me/media?access_token=${accessToken}`, {
+        const createPostResponse = await fetch(`https://graph.facebook.com/v18.0/${instagramAccountId}/media?access_token=${accessToken}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -49,7 +87,7 @@ export async function POST(request) {
 
         // Por fim, publica o post
         console.log('Tentando publicar o post...');
-        const publishResponse = await fetch(`https://graph.facebook.com/v18.0/me/media_publish?access_token=${accessToken}`, {
+        const publishResponse = await fetch(`https://graph.facebook.com/v18.0/${instagramAccountId}/media_publish?access_token=${accessToken}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
