@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FaInstagram, FaImage, FaSpinner } from 'react-icons/fa';
 
 export default function InstagramPostForm() {
+    const [image, setImage] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [caption, setCaption] = useState('');
     const [loading, setLoading] = useState(false);
@@ -13,11 +14,28 @@ export default function InstagramPostForm() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Cria uma URL para a imagem
-            const url = URL.createObjectURL(file);
-            setImageUrl(url);
+            setImage(file);
+            setImageUrl(URL.createObjectURL(file));
             setError(null);
         }
+    };
+
+    const uploadToImgBB = async (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${'2d300aec75e043ab714bf09453497004'}`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Erro ao fazer upload da imagem');
+        }
+
+        return data.data.url;
     };
 
     const handleSubmit = async (e) => {
@@ -34,9 +52,16 @@ export default function InstagramPostForm() {
                 throw new Error('Usuário não está autenticado. Por favor, faça login novamente.');
             }
 
+            if (!image) {
+                throw new Error('Selecione uma imagem');
+            }
+
+            // Faz upload da imagem para o ImgBB
+            const publicImageUrl = await uploadToImgBB(image);
+
             // Cria o FormData com os dados
             const formData = new FormData();
-            formData.append('image', imageUrl);
+            formData.append('image', publicImageUrl);
             formData.append('caption', caption);
             formData.append('accessToken', accessToken);
 
@@ -52,6 +77,7 @@ export default function InstagramPostForm() {
             }
 
             setSuccess(true);
+            setImage(null);
             setImageUrl('');
             setCaption('');
         } catch (err) {
@@ -79,7 +105,10 @@ export default function InstagramPostForm() {
                                     <img src={imageUrl} alt="Preview" className="max-h-64 rounded-lg" />
                                     <button
                                         type="button"
-                                        onClick={() => setImageUrl('')}
+                                        onClick={() => {
+                                            setImage(null);
+                                            setImageUrl('');
+                                        }}
                                         className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                                     >
                                         ×
@@ -136,10 +165,10 @@ export default function InstagramPostForm() {
                 {/* Botão de Envio */}
                 <button
                     type="submit"
-                    disabled={!imageUrl || loading}
+                    disabled={!image || loading}
                     className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
                         ${
-                            !imageUrl || loading
+                            !image || loading
                                 ? 'bg-gray-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
                         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`}
