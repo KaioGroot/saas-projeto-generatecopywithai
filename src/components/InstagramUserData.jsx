@@ -10,7 +10,15 @@ export default function InstagramUserData() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch('/api/instagram/user-data');
+                // Busca o token do localStorage
+                const token = localStorage.getItem('instagram_access_token');
+
+                if (!token) {
+                    setError('Token não encontrado. Por favor, faça login novamente.');
+                    return;
+                }
+
+                const response = await fetch(`/api/instagram/user-data?token=${token}`);
                 const data = await response.json();
 
                 if (data.error) {

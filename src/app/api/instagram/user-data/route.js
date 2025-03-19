@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        // Busca o token de acesso do usuário (você precisará implementar um sistema de armazenamento de tokens)
-        const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+        // Obtém o token da query string
+        const { searchParams } = new URL(request.url);
+        const accessToken = searchParams.get('token');
 
         if (!accessToken) {
-            return NextResponse.json({ error: 'Usuário não está autenticado' }, { status: 401 });
+            return NextResponse.json({ error: 'Token não fornecido' }, { status: 401 });
         }
 
         // Busca informações do usuário do Instagram

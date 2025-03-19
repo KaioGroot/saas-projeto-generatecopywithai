@@ -75,8 +75,10 @@ export async function GET(request) {
 
         console.log('Dados do usuário:', userData); // Log para debug
 
-        // Salva o token de acesso (você precisará implementar um sistema de armazenamento de tokens)
-        // Por enquanto, vamos apenas redirecionar com o token na URL (não recomendado para produção)
+        // Salva o token de acesso no localStorage do navegador
+        localStorage.setItem('instagram_access_token', tokenData.access_token);
+
+        // Redireciona para a página de sucesso com o token
         return NextResponse.redirect(`${BASE_URL}/social?success=true&token=${tokenData.access_token}`);
     } catch (error) {
         console.error('Erro no callback:', error);
