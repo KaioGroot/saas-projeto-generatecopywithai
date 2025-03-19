@@ -7,33 +7,30 @@ const INSTAGRAM_APP_ID = '2019139641939405';
 
 export async function GET(request) {
     try {
-        console.log('URL completa recebida:', request.url); // Log da URL completa
+        console.log('URL completa recebida:', request.url);
 
         // Remove o fragmento #_=_ da URL se existir
         const url = new URL(request.url);
         const cleanUrl = url.toString().split('#')[0];
-        console.log('URL limpa:', cleanUrl); // Log da URL limpa
+        console.log('URL limpa:', cleanUrl);
 
         const searchParams = new URL(cleanUrl).searchParams;
         const code = searchParams.get('code');
         const error = searchParams.get('error');
 
-        console.log('Código recebido:', code); // Log para debug
-        console.log('Erro recebido:', error); // Log para debug
+        console.log('Código recebido:', code);
+        console.log('Erro recebido:', error);
 
-        // Se houver erro ou o usuário cancelou
         if (error || !code) {
             console.error('Erro na autenticação:', error);
             return NextResponse.redirect(`${BASE_URL}/social?error=auth_failed`);
         }
 
-        // Verifica se o client secret está definido
         if (!process.env.INSTAGRAM_CLIENT_SECRET) {
             console.error('INSTAGRAM_CLIENT_SECRET não está definido');
             return NextResponse.redirect(`${BASE_URL}/social?error=config_failed`);
         }
 
-        // Prepara os parâmetros para a requisição
         const params = new URLSearchParams({
             client_id: INSTAGRAM_APP_ID,
             client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
@@ -42,9 +39,8 @@ export async function GET(request) {
             code,
         });
 
-        console.log('Parâmetros da requisição:', params.toString()); // Log dos parâmetros
+        console.log('Parâmetros da requisição:', params.toString());
 
-        // Troca o código por um token de acesso
         const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
             method: 'POST',
             headers: {
@@ -54,7 +50,7 @@ export async function GET(request) {
         });
 
         const responseText = await tokenResponse.text();
-        console.log('Resposta do Instagram:', responseText); // Log da resposta completa
+        console.log('Resposta do Instagram:', responseText);
 
         if (!tokenResponse.ok) {
             console.error('Erro ao obter token:', responseText);
@@ -62,7 +58,7 @@ export async function GET(request) {
         }
 
         const tokenData = JSON.parse(responseText);
-        console.log('Token recebido:', tokenData); // Log para debug
+        console.log('Token recebido:', tokenData);
 
         // Busca informações do usuário do Instagram
         const userResponse = await fetch(`https://graph.instagram.com/me?fields=id,username&access_token=${tokenData.access_token}`);
@@ -73,10 +69,7 @@ export async function GET(request) {
             return NextResponse.redirect(`${BASE_URL}/social?error=user_info_failed`);
         }
 
-        console.log('Dados do usuário:', userData); // Log para debug
-
-        // Salva o token de acesso no localStorage do navegador
-        localStorage.setItem('instagram_access_token', tokenData.access_token);
+        console.log('Dados do usuário:', userData);
 
         // Redireciona para a página de sucesso com o token
         return NextResponse.redirect(`${BASE_URL}/social?success=true&token=${tokenData.access_token}`);
