@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import InstagramLoginButton from '@/components/InstagramLoginButton';
 import InstagramUserData from '@/components/InstagramUserData';
+import InstagramPostForm from '@/components/InstagramPostForm';
 import { FaInstagram, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 
 export default function SocialPage() {
@@ -48,6 +49,12 @@ export default function SocialPage() {
                             <div className="border-t border-gray-200 pt-8">
                                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Dados da Conta</h2>
                                 <InstagramUserData />
+                            </div>
+
+                            {/* Seção de Criação de Post */}
+                            <div className="border-t border-gray-200 pt-8">
+                                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Criar Novo Post</h2>
+                                <InstagramPostForm />
                             </div>
                         </div>
                     </div>

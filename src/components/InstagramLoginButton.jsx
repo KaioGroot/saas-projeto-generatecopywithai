@@ -10,7 +10,7 @@ export default function InstagramLoginButton() {
         const REDIRECT_URI = 'https://saas-projeto-generatecopywithai-jnbh.vercel.app/api/auth/instagram/callback';
 
         // Escopos necessários para Instagram Business
-        const scopes = ['instagram_business_basic', 'instagram_business_manage_messages'].join(',');
+        const scopes = ['instagram_business_basic', 'instagram_business_manage_messages', 'instagram_business_content_publish'].join(',');
 
         // Constrói a URL de autorização do Instagram
         const authUrl = `https://api.instagram.com/oauth/authorize?client_id=${INSTAGRAM_APP_ID}&redirect_uri=${encodeURIComponent(
