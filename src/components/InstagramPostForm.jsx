@@ -25,10 +25,18 @@ export default function InstagramPostForm() {
         setSuccess(false);
 
         try {
+            // Obtém o token do localStorage
+            const accessToken = localStorage.getItem('instagram_access_token');
+
+            if (!accessToken) {
+                throw new Error('Usuário não está autenticado. Por favor, faça login novamente.');
+            }
+
             // Primeiro, faz upload da imagem
             const formData = new FormData();
             formData.append('image', image);
             formData.append('caption', caption);
+            formData.append('accessToken', accessToken);
 
             const response = await fetch('/api/instagram/create-post', {
                 method: 'POST',
@@ -61,18 +69,12 @@ export default function InstagramPostForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Upload de Imagem */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Imagem do Post
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Imagem do Post</label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                         <div className="space-y-1 text-center">
                             {image ? (
                                 <div className="relative">
-                                    <img
-                                        src={URL.createObjectURL(image)}
-                                        alt="Preview"
-                                        className="max-h-64 rounded-lg"
-                                    />
+                                    <img src={URL.createObjectURL(image)} alt="Preview" className="max-h-64 rounded-lg" />
                                     <button
                                         type="button"
                                         onClick={() => setImage(null)}
@@ -101,9 +103,7 @@ export default function InstagramPostForm() {
                                         </label>
                                         <p className="pl-1">ou arraste e solte</p>
                                     </div>
-                                    <p className="text-xs text-gray-500">
-                                        PNG, JPG até 10MB
-                                    </p>
+                                    <p className="text-xs text-gray-500">PNG, JPG até 10MB</p>
                                 </>
                             )}
                         </div>
@@ -127,26 +127,19 @@ export default function InstagramPostForm() {
                 </div>
 
                 {/* Mensagens de Erro e Sucesso */}
-                {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        {error}
-                    </div>
-                )}
+                {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">{error}</div>}
 
-                {success && (
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                        Post criado com sucesso!
-                    </div>
-                )}
+                {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">Post criado com sucesso!</div>}
 
                 {/* Botão de Envio */}
                 <button
                     type="submit"
                     disabled={!image || loading}
                     className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-                        ${!image || loading
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
+                        ${
+                            !image || loading
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
                         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`}
                 >
                     {loading ? (
@@ -161,4 +154,4 @@ export default function InstagramPostForm() {
             </form>
         </div>
     );
-} 
+}

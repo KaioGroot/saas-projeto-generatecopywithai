@@ -5,13 +5,11 @@ export async function POST(request) {
         const formData = await request.formData();
         const image = formData.get('image');
         const caption = formData.get('caption');
+        const accessToken = formData.get('accessToken'); // Recebe o token do cliente
 
         if (!image) {
             return NextResponse.json({ error: 'Imagem é obrigatória' }, { status: 400 });
         }
-
-        // Obtém o token de acesso do localStorage (você precisará implementar um sistema de armazenamento de tokens)
-        const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
 
         if (!accessToken) {
             return NextResponse.json({ error: 'Usuário não está autenticado' }, { status: 401 });
