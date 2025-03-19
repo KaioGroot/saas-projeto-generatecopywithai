@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FaInstagram, FaImage, FaSpinner } from 'react-icons/fa';
 
 export default function InstagramPostForm() {
-    const [image, setImage] = useState(null);
+    const [imageUrl, setImageUrl] = useState('');
     const [caption, setCaption] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -13,7 +13,9 @@ export default function InstagramPostForm() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setImage(file);
+            // Cria uma URL para a imagem
+            const url = URL.createObjectURL(file);
+            setImageUrl(url);
             setError(null);
         }
     };
@@ -32,9 +34,9 @@ export default function InstagramPostForm() {
                 throw new Error('Usuário não está autenticado. Por favor, faça login novamente.');
             }
 
-            // Primeiro, faz upload da imagem
+            // Cria o FormData com os dados
             const formData = new FormData();
-            formData.append('image', image);
+            formData.append('image', imageUrl);
             formData.append('caption', caption);
             formData.append('accessToken', accessToken);
 
@@ -50,7 +52,7 @@ export default function InstagramPostForm() {
             }
 
             setSuccess(true);
-            setImage(null);
+            setImageUrl('');
             setCaption('');
         } catch (err) {
             setError(err.message);
@@ -72,12 +74,12 @@ export default function InstagramPostForm() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Imagem do Post</label>
                     <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                         <div className="space-y-1 text-center">
-                            {image ? (
+                            {imageUrl ? (
                                 <div className="relative">
-                                    <img src={URL.createObjectURL(image)} alt="Preview" className="max-h-64 rounded-lg" />
+                                    <img src={imageUrl} alt="Preview" className="max-h-64 rounded-lg" />
                                     <button
                                         type="button"
-                                        onClick={() => setImage(null)}
+                                        onClick={() => setImageUrl('')}
                                         className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                                     >
                                         ×
@@ -134,10 +136,10 @@ export default function InstagramPostForm() {
                 {/* Botão de Envio */}
                 <button
                     type="submit"
-                    disabled={!image || loading}
+                    disabled={!imageUrl || loading}
                     className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
                         ${
-                            !image || loading
+                            !imageUrl || loading
                                 ? 'bg-gray-400 cursor-not-allowed'
                                 : 'bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600'
                         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500`}
